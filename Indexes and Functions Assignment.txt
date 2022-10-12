@@ -1,0 +1,45 @@
+exports = function(arg){
+  var collection = context.services.get("mongodb-atlas").db("football").collection("foot_ball");
+  return collection.aggregate([{"$group": {"_id":{"teamName":"$teamName"}, 
+"goal": {"$avg": "$goal"}}} ,
+  {"$project":{teamName:"$_id" , name:1 , goal:1}} ,
+  {"$project": {round_2:{"$round": ["$goal",2]}}},
+])
+};
+
+ ---
+exports = function(int_num){
+  var collection = context.services.get("mongodb-atlas").db("football").collection("foot_ball");
+  return collection.find({goal:{"$gte":int_num}},{name:1,teamName:1,goal:1,_id:0 })
+;
+  
+};
+---
+exports = function(arg){
+  var collection = context.services.get("mongodb-atlas").db("football").collection("foot_ball");
+  return collection.find({}, {name:1 , _id: 0});
+};
+---
+exports = function(arg){
+
+    var collection = context.services.get("mongodb-atlas").db("football").collection("foot_ball");
+   
+  return collection.aggregate([{"$match":{age:{"$lt":20}}},{"$sort":{age:-1}}])
+};
+--
+exports = function(){
+  
+    var collection = context.services.get("mongodb-atlas").db("football").collection("foot_ball");
+    return collection.find({ name: "Joselu"})
+  
+};
+---
+exports = function(arg){
+  var collection = context.services.get("mongodb-atlas").db("football").collection("foot_ball");
+
+return collection.aggregate(
+[{"$project":{_id: false, teamName: true, assistTotal: 1,aerialWonPerGame: 1}},
+{ "$group": {_id: '$teamName',Total_assists: {"$sum": '$assistTotal'},
+
+Total_wins: {"$sum": '$aerialWonPerGame'}}}, {"$project": {Total_wins: {"$round": ['$Total_wins',2]}, Total_assists: 1}}]);
+};
